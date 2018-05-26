@@ -1,0 +1,48 @@
+ConfigCollector - specifikacije
+
+Zadatak:
+**************************************************
+Sakupljanje konfiguracijskih postavki i drugih informacija sa udaljenog uređaja
+
+Opširniji opis problema
+**************************************************
+Održavanje velikoh broja mrežnih uređaja znači i održavanje velikog broja konfiguracijskih datoteka.
+
+Obzirom da pristup uređajima ima veći broj ljudi čije tehničko znanje i sposobnosti nisu jednaki, moguće je i da neko prilikom izmjene postavki uređaja, pogrešno konfiguriše uređaj što dovodi do problema u funkcionisanju računarske mreže i cijelog sistema. S tim u vezi, pravljenje redovnog backup-a konfiguracije uređaja je značajno.
+
+Pravljenje backup-a uređaja znači da se neko spoji na svaki uređaj i izvrši komandu koja će konfiguracijsku datoteku tog uređaja kopirati na TFTP server.
+Sa uređaja proizvođača Fortinet/Cisco/HP izvršenjem jedne komande na uređaju se može kopirati konfiguracijski fajl na TFTP server.
+Primjer komande kojom se konfiguracijska datoteka kopira na TFTP server:
+# execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>]
+TODO: Gdje je:
+<filename_str> 
+<server_ipv4>
+<backup_password_str>
+
+Pored pravljenja rezervnih kopija konfiguracijskih datoteka, ponekad je potrebno na većem broju uređaja (router/switch) izvršiti jednu te istu komandu ili set istih komandi. 
+Isto tako, ponekad se ista komanda ili set komandi mora izvršiti na jednom ili više uređaju više puta u toku dana. To može biti u pravilnim vremenskim intervalima ili u nepravilnim vremenskim intervalima.
+Izlaz (output) komande koja je izvršena na uređaju se potom procesira u smislu da se dobijeni izlaz upoređuje sa željenim izlazom. Ukoliko dobijeni izlaz nije jednak željenom izlazu, potrebno je izvršiti dodatnu komandu! To znači da administrator mora utvrditi razlog zašto je komanda neuspješna i otkloniti problem.
+
+KAKO SE MOŽE ZNATI KOJA JE DODATNA KOMANDA? KOLIKO NEŽELJENIH IZLAZA MOŽE BITI?
+Na primjer, ako izvršvanje komande "# show interface ip" ima bilo koji drugu vrijednost od zadane, komanda podešavanja interfejsa se nije izvršila kako treba.
+U ovom slučaju potrebno je signalizirati administratoru da je došlo do greške prilikom podešavanja komande.
+
+U svakom slučaju, na uređaj se spaja putem SSH protokola, i komande se moraju ručno ukucati i izvršiti.
+
+
+TODO: DOPUNITI TAKO DA SU TU SVI KORACI OD SAMOG USPOSTAVLJANJA KONEKCIJE
+Primjer pravljenja rezervne kopije uređaja:
+ssh username@ip_address
+
+
+Osnovni zadataka:
+**************************************************
+1. Kreiranje rezervnih kopija konfiguracijskih postavki uređaja
+2. Poređenje trenutne konfiguracije uređaja sa prethodnom i prikazivanje razlika
+3. Izvršavanje zadane komande ili seta komandi na jednom ili skupu uređaja te pritom detektovanje neželjenog rezultata. Ukoliko postoji neželjeni output, obavijestiti administratora.
+
+Tehnički opis pojmova
+**************************************************
+Uređaj: mrežni uređaj (router ili switch) koji je definisan jedinstvenom IP adresom, i kojem se pristupa pripadajućim korisničkim imenom i šifrom. IMA LI UREĐAJ IME, OPIS, I JOŠ NEŠTO ŠTO GA DEFINIŠE U SISTEMU?
+Konfiguracija: tekstualni fajl koji sadrži posatavke uređaja
+Komanda: tekstualna instrukcija
