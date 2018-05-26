@@ -4,6 +4,7 @@ Zadatak:
 **************************************************
 Sakupljanje konfiguracijskih postavki i drugih informacija sa udaljenog uređaja
 
+
 Opširniji opis problema
 **************************************************
 Održavanje velikoh broja mrežnih uređaja znači i održavanje velikog broja konfiguracijskih datoteka.
@@ -15,14 +16,15 @@ Sa uređaja proizvođača Fortinet/Cisco/HP izvršenjem jedne komande na uređaj
 Primjer komande kojom se konfiguracijska datoteka kopira na TFTP server:
 # execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>]
 TODO: Gdje je:
-<filename_str> 
-<server_ipv4>
-<backup_password_str>
+<filename_str> - naziv fajla gdje se čuva konfiguracija
+<server_ipv4> - IP adresa servera
+<backup_password_str> - enkripcija za konfiguraciju, opcionalno polje
 
 Pored pravljenja rezervnih kopija konfiguracijskih datoteka, ponekad je potrebno na većem broju uređaja (router/switch) izvršiti jednu te istu komandu ili set istih komandi. 
 Isto tako, ponekad se ista komanda ili set komandi mora izvršiti na jednom ili više uređaju više puta u toku dana. To može biti u pravilnim vremenskim intervalima ili u nepravilnim vremenskim intervalima.
 Izlaz (output) komande koja je izvršena na uređaju se potom procesira u smislu da se dobijeni izlaz upoređuje sa željenim izlazom. Ukoliko dobijeni izlaz nije jednak željenom izlazu, potrebno je izvršiti dodatnu komandu! To znači da administrator mora utvrditi razlog zašto je komanda neuspješna i otkloniti problem.
 
+**************************************************
 KAKO SE MOŽE ZNATI KOJA JE DODATNA KOMANDA? KOLIKO NEŽELJENIH IZLAZA MOŽE BITI?
 Na primjer, ako izvršvanje komande "# show interface ip" ima bilo koji drugu vrijednost od zadane, komanda podešavanja interfejsa se nije izvršila kako treba.
 U ovom slučaju potrebno je signalizirati administratoru da je došlo do greške prilikom podešavanja komande.
@@ -32,8 +34,10 @@ U svakom slučaju, na uređaj se spaja putem SSH protokola, i komande se moraju 
 
 TODO: DOPUNITI TAKO DA SU TU SVI KORACI OD SAMOG USPOSTAVLJANJA KONEKCIJE
 Primjer pravljenja rezervne kopije uređaja:
-ssh username@ip_address
-
+Korak 1. Napraviti SSH konekciju sa uređajem, ssh username@ip_address
+Korak 2. Izvršiti komandu # execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>] 
+Korak 3. Ako izvršena komanda nije javila grešku, zatvoriti sesiju
+Korak 4. U slučaju greške prilikom izvršavanja komande poslati notifikaciju administratoru
 
 Osnovni zadataka:
 **************************************************
@@ -43,6 +47,12 @@ Osnovni zadataka:
 
 Tehnički opis pojmova
 **************************************************
-Uređaj: mrežni uređaj (router ili switch) koji je definisan jedinstvenom IP adresom, i kojem se pristupa pripadajućim korisničkim imenom i šifrom. IMA LI UREĐAJ IME, OPIS, I JOŠ NEŠTO ŠTO GA DEFINIŠE U SISTEMU?
+Uređaj: mrežni uređaj (router ili switch) koji je definisan jedinstvenom IP adresom, i kojem se pristupa pripadajućim korisničkim imenom i šifrom. 
+
+IMA LI UREĐAJ IME, OPIS, I JOŠ NEŠTO ŠTO GA DEFINIŠE U SISTEMU?
+Uređaj ima i ime, ali preko tog imena se ne može pristupiti uređaju. 
+Bilo bi dobro da softver može sam, prilikom spajanja na uređaj, pročitati verziju operativnog sistema te i te informacije pokazati administratoru.
+
+
 Konfiguracija: tekstualni fajl koji sadrži posatavke uređaja
 Komanda: tekstualna instrukcija
