@@ -1,5 +1,6 @@
 ConfigCollector - specifikacije
 
+
 Zadatak:
 **************************************************
 Sakupljanje konfiguracijskih postavki i drugih informacija sa udaljenog uređaja
@@ -14,45 +15,42 @@ Obzirom da pristup uređajima ima veći broj ljudi čije tehničko znanje i spos
 Pravljenje backup-a uređaja znači da se neko spoji na svaki uređaj i izvrši komandu koja će konfiguracijsku datoteku tog uređaja kopirati na TFTP server.
 Sa uređaja proizvođača Fortinet/Cisco/HP izvršenjem jedne komande na uređaju se može kopirati konfiguracijski fajl na TFTP server.
 Primjer komande kojom se konfiguracijska datoteka kopira na TFTP server:
+JE LI BAŠ TFTP (TRIVIAL FTP) ILI FTP??
 # execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>]
 TODO: Gdje je:
-<filename_str> - naziv fajla gdje se čuva konfiguracija
+<filename_str> - naziv fajla gdje se čuva konfiguracija NA SAMOM UREĐAJU ILI NA SERVERU??? AKO JE NA SAMOM UREĐAJU, SVAKI UREĐAJ IMA FAJL ISTOG IMENA ILI RAZLIČITOG?
 <server_ipv4> - IP adresa servera
-<backup_password_str> - enkripcija za konfiguraciju, opcionalno polje
+<backup_password_str> - enkripcija za konfiguraciju, opcionalno polje (PITANJE: password kojim se enkriptuje konfiguracijska datoteka koja je snimljena na FTP server??)
 
 Pored pravljenja rezervnih kopija konfiguracijskih datoteka, ponekad je potrebno na većem broju uređaja (router/switch) izvršiti jednu te istu komandu ili set istih komandi. 
 Isto tako, ponekad se ista komanda ili set komandi mora izvršiti na jednom ili više uređaju više puta u toku dana. To može biti u pravilnim vremenskim intervalima ili u nepravilnim vremenskim intervalima.
 Izlaz (output) komande koja je izvršena na uređaju se potom procesira u smislu da se dobijeni izlaz upoređuje sa željenim izlazom. Ukoliko dobijeni izlaz nije jednak željenom izlazu, potrebno je izvršiti dodatnu komandu! To znači da administrator mora utvrditi razlog zašto je komanda neuspješna i otkloniti problem.
 
-**************************************************
-KAKO SE MOŽE ZNATI KOJA JE DODATNA KOMANDA? KOLIKO NEŽELJENIH IZLAZA MOŽE BITI?
 Na primjer, ako izvršvanje komande "# show interface ip" ima bilo koji drugu vrijednost od zadane, komanda podešavanja interfejsa se nije izvršila kako treba.
 U ovom slučaju potrebno je signalizirati administratoru da je došlo do greške prilikom podešavanja komande.
 
 U svakom slučaju, na uređaj se spaja putem SSH protokola, i komande se moraju ručno ukucati i izvršiti.
 
-
-TODO: DOPUNITI TAKO DA SU TU SVI KORACI OD SAMOG USPOSTAVLJANJA KONEKCIJE
 Primjer pravljenja rezervne kopije uređaja:
-Korak 1. Napraviti SSH konekciju sa uređajem, ssh username@ip_address
-Korak 2. Izvršiti komandu # execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>] 
+Korak 1. Napraviti SSH konekciju sa uređajem: ssh username@ip_address
+Korak 2. Izvršiti komandu na uređaju: # execute backup config tftp <filename_str> <server_ipv4> [<backup_password_str>] TODO: JE LI "#" ILI JE TO SAMO PROMPT?
 Korak 3. Ako izvršena komanda nije javila grešku, zatvoriti sesiju
 Korak 4. U slučaju greške prilikom izvršavanja komande poslati notifikaciju administratoru
+
 
 Osnovni zadataka:
 **************************************************
 1. Kreiranje rezervnih kopija konfiguracijskih postavki uređaja
 2. Poređenje trenutne konfiguracije uređaja sa prethodnom i prikazivanje razlika
 3. Izvršavanje zadane komande ili seta komandi na jednom ili skupu uređaja te pritom detektovanje neželjenog rezultata. Ukoliko postoji neželjeni output, obavijestiti administratora.
+4. Prilikom spajanja na uređaj, pročitati verziju operativnog sistema i prikazati je operatoru
+
 
 Tehnički opis pojmova
 **************************************************
 Uređaj: mrežni uređaj (router ili switch) koji je definisan jedinstvenom IP adresom, i kojem se pristupa pripadajućim korisničkim imenom i šifrom. 
-
-IMA LI UREĐAJ IME, OPIS, I JOŠ NEŠTO ŠTO GA DEFINIŠE U SISTEMU?
-Uređaj ima i ime, ali preko tog imena se ne može pristupiti uređaju. 
-Bilo bi dobro da softver može sam, prilikom spajanja na uređaj, pročitati verziju operativnog sistema te i te informacije pokazati administratoru.
-
+Svaki uređaj ima i verziju operativnog sistema Uređaj ima i ime, ali preko tog imena se ne može pristupiti uređaju.
 
 Konfiguracija: tekstualni fajl koji sadrži posatavke uređaja
+
 Komanda: tekstualna instrukcija
