@@ -7,7 +7,7 @@ logger = logging.getLogger("Device")
 
 class Device:
 	"""
-	# This class provides a simpler interface to use the SSH mechanism to connect to a remote device and execute commands
+	This class provides a simpler interface to use the SSH mechanism to connect to a remote device and execute commands
 	on the remote device.
 	http://docs.paramiko.org/en/2.4/index.html
 	"""
