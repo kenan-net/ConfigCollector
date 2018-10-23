@@ -2,6 +2,7 @@
 import logging
 import paramiko
 import socket
+import time
 logger = logging.getLogger("Device")
 
 
@@ -12,7 +13,7 @@ class Device:
 	http://docs.paramiko.org/en/2.4/index.html
 	"""
 
-	def __init__(self, ip_adddress, username, password, port=22, firmware=None, description=None):
+	def __init__(self, ip_address, username, password, port=22, firmware=None, description=None):
 		"""
 		Default class constructor. Called whenever a new object is instantiated.
 		Expects IP address of a device, username and password which are used when connecting to the device.
@@ -27,7 +28,7 @@ class Device:
 		description: string representing the description of the device
 		"""
 		# Device variables
-		self._ip_address = ip_adddress
+		self._ip_address = ip_address
 		self._port = port
 		self._username = username
 		self._password = password
@@ -44,7 +45,7 @@ class Device:
 		self.__connect()
 		if not self._connected:
 			logger.error("Connection failed!")
-		logger.debug("New Device object created. Device IP: {}".format(ip_adddress))
+		logger.debug("New Device object created. Device IP: {}".format(ip_address))
 		return
 
 	def __del__(self):
@@ -52,7 +53,8 @@ class Device:
 		Default class destructor. Called when the class instance has been deleted.
 		:return: No return value.
 		"""
-		self._client.close()
+		if self._connected:
+			self._client.close()
 		logger.debug("Device object deleted. Device IP: {}".format(self._ip_address))
 		return
 
@@ -116,14 +118,15 @@ class Device:
 		"""
 		# List1 = [12, "Ravi", "B.Com FY", 78.50]  # list
 		# Tuple1 = (12, "Ravi", "B.Com FY", 78.50)  # tuple
-		# Dictionary1 = {"Rollno": 12, "class": "B.com FY", "precentage": 78.50}  # dictionary
+		# Dictionary1 = {"Rollno": 12, "class": "B.com FY", "percentage": 78.50}  # dictionary
 		# List and tuple items are indexed.
 		logger.debug("Executing command: {0}".format(cmd))
 		try:
 			stdin, stdout, stderr = self._client.exec_command(cmd)
 		except paramiko.SSHException:
 			logger.error("Executing command {0} on device {1} failed.".format(cmd, self._ip_address))
-			return
+			toBeReturned = (True, "Failed executing command!")
+			return toBeReturned
 		# WARNING: Once you read stdout or stderr, you loose the buffer and second read will give you empty buffer
 		error = stderr.read()
 		if len(error):
@@ -150,3 +153,29 @@ class Device:
 		:return: string representing the description of the device
 		"""
 		return self._description
+
+	def write_output_to_file(self, data):
+		"""
+		Writes string "data" which is provided as an argument to a text file which will have the name in format:
+		username@ip-address.txt
+		:param data: String data that will be written to a text file.
+		:return: returns True if data has been successfully written to a file, otherwise returns False
+		"""
+		currentTime = time.localtime()
+		year = currentTime.tm_year
+		month = currentTime.tm_mon
+		day = currentTime.tm_mday
+		hour = currentTime.tm_hour
+		minute = currentTime.tm_min
+		# sec = currentTime.tm_sec
+		fileName = "{0}@{1}-{2}-{3}-{4}_{5}-{6}.txt".format(self._username, self._ip_address, year, month, day, hour, minute)
+		try:
+			logFile = open(fileName, 'w')
+		except IOError as e:
+			logger.error("Error while creating file. I/O error({0}): {1}".format(e.errno, e.strerror))
+			logger.error("Data will not be saved to file.")
+			return False
+		else:
+			logFile.write(data)
+			logFile.close()
+		return True
